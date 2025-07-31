@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import subprocess
 import sys
 import tempfile
@@ -13,6 +14,8 @@ INCLUDE_CREDS = {
     "get-zone",
     "get-zones",
 }
+
+DNSCONTROL_EXECUTABLE = "@dnscontrol@/bin/dnscontrol"
 
 
 def parseFlakePath(args):
@@ -54,7 +57,7 @@ def main():
 
     try:
         with tempfile.NamedTemporaryFile(mode="w+") as f:
-            dnscontrolCommand = ["dnscontrol"] + remainingArgs[1:]
+            dnscontrolCommand = [DNSCONTROL_EXECUTABLE] + remainingArgs[1:]
 
             if set(remainingArgs) & INCLUDE_CONFIG:
                 configOutput = getFlakeAttribute(flakePath, "dns.config")

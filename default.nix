@@ -1,16 +1,26 @@
 {
   pkgs ? import <nixpkgs> { },
+  buildPythonPackage ? pkgs.python3Packages.buildPythonPackage,
+  dnscontrol ? pkgs.dnscontrol,
+  sops ? pkgs.sops,
 }:
-pkgs.symlinkJoin rec {
-  name = "dnscontrol-nix";
-  paths = [
-    (pkgs.writers.writePython3Bin "dnscontrol-nix" { } (builtins.readFile ./src/dnscontrol-nix.py))
-    pkgs.sops
-  ];
-  buildInputs = [ pkgs.makeWrapper ];
-  postBuild = ''
-    wrapProgram $out/bin/dnscontrol-nix \
-      --prefix PATH : "${pkgs.dnscontrol}/bin"
-    ln -s $out/bin/${name} $out/bin/lix-dns
+buildPythonPackage rec {
+  pname = "dnscontrol-nix";
+  version = "0.1.0";
+  pyproject = false;
+
+  src = ./src;
+
+  configurePhase = ''
+    substituteInPlace dnscontrol-nix.py \
+      --subst-var-by dnscontrol ${dnscontrol}
+  '';
+
+  installPhase = ''
+    runHook preInstall
+    mkdir -p $out/bin/
+    install -m 755 dnscontrol-nix.py $out/bin/dnscontrol-nix
+    ln -s $out/bin/dnscontrol-nix $out/bin/lix-dns
+    runHook postInstall
   '';
 }
