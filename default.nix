@@ -4,8 +4,8 @@
 pkgs.symlinkJoin rec {
   name = "dnscontrol-nix";
   paths = [
-    (pkgs.writers.writePython3Bin "dnscontrol-nix" { } (builtins.readFile ./dnscontrol-nix.py))
-    pkgs.dnscontrol
+    (pkgs.writers.writePython3Bin "dnscontrol-nix" { } (builtins.readFile ./src/dnscontrol-nix.py))
+    pkgs.sops
   ];
   buildInputs = [ pkgs.makeWrapper ];
   postBuild = ''
