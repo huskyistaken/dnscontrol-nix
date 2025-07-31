@@ -35,6 +35,7 @@ This tool acts as a wrapper, reading DNS configurations specified in a flake and
 
       dns = inputs.dnscontrol-nix.lib.buildConfig {
         settings.sops = {
+          package = pkgs.sops;
           file = ./secrets.yaml;
           extractString = "['dns-creds']";
         };
