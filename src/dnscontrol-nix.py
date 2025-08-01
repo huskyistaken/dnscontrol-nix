@@ -60,13 +60,13 @@ def main():
             dnscontrolCommand = [DNSCONTROL_EXECUTABLE] + remainingArgs[1:]
 
             if set(remainingArgs) & INCLUDE_CONFIG:
-                configOutput = getFlakeAttribute(flakePath, "dns.config")
+                configOutput = getFlakeAttribute(flakePath, "dns.outputs.config")
                 f.write(configOutput)
                 f.flush()
                 dnscontrolCommand += ["--config", f.name]
 
             if set(remainingArgs) & INCLUDE_CREDS:
-                credsOutput = getFlakeAttribute(flakePath, "dns.creds")
+                credsOutput = getFlakeAttribute(flakePath, "dns.outputs.creds")
                 dnscontrolCommand += ["--creds", credsOutput]
 
             subprocess.run(dnscontrolCommand, check=True)
