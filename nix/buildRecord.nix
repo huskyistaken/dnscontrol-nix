@@ -118,6 +118,22 @@ let
       in
       "${type}(${domain})";
 
+    nameserver =
+      record:
+      let
+        type = lib.toUpper record.type;
+        target = ''"${record.target}"'';
+      in
+      "${type}(${target})";
+
+    nameserver_ttl =
+      record:
+      let
+        type = lib.toUpper record.type;
+        ttl = toString record.ttl;
+      in
+      "${type}(${ttl})";
+
     ptr =
       record:
       let
