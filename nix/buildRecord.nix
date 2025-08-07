@@ -40,38 +40,14 @@ let
       let
         type = lib.toUpper record.type;
         label = ''"${record.label}"'';
-
-        canHavePriority =
-          type:
-          elem type [
-            "mx"
-            "https"
-            "srv"
-          ];
-        priority =
-          if record ? "priority" && canHavePriority record.type then ", ${toString record.priority}" else "";
-
-        canHaveWeight = type: elem type [ "srv" ];
-        weight =
-          if record ? "weight" && canHaveWeight record.type then ", ${toString record.weight}" else "";
-
-        canHavePort = type: elem type [ "srv" ];
-        port = if record ? "port" && canHavePort record.type then ", ${toString record.port}" else "";
-
-        canHaveParams = type: elem type [ "https" ];
-        params = if record ? "params" && canHaveParams record.type then '', "${record.params}"'' else "";
-
         target = '', "${record.target}"'';
         modifiers = recordModifiers record;
       in
-      "${type}(${label}${priority}${weight}${port}${target}${params}${modifiers})";
+      "${type}(${label}${target}${modifiers})";
     cname = target;
     alias = target;
     dhcid = target;
     dname = target;
-    mx = target;
-    https = target;
-    srv = target;
     ns = target;
 
     dnskey =
@@ -100,6 +76,18 @@ let
       in
       "${type}(${label}${keyTag}${algorithm}${digestType}${digest}${modifiers})";
 
+    https =
+      record:
+      let
+        type = lib.toUpper record.type;
+        label = ''"${record.label}"'';
+        priority = ", ${toString record.priority}";
+        target = '', "${record.target}"'';
+        params = '', "${record.params}"'';
+        modifiers = recordModifiers record;
+      in
+      "${type}(${label}${priority}${target}${params}${modifiers})";
+
     ignore =
       record:
       let
@@ -118,6 +106,17 @@ let
         domain = ''"${record.domain}"'';
       in
       "${type}(${domain})";
+
+    mx =
+      record:
+      let
+        type = lib.toUpper record.type;
+        label = ''"${record.label}"'';
+        priority = ", ${toString record.priority}";
+        target = '', "${record.target}"'';
+        modifiers = recordModifiers record;
+      in
+      "${type}(${label}${priority}${target}${modifiers})";
 
     nameserver =
       record:
@@ -174,6 +173,19 @@ let
         modifiers = recordModifiers record;
       in
       "${type}(${label}${ns}${mbox}${refresh_rate}${retry_rate}${expire_time}${default_ttl}${modifiers})";
+
+    srv =
+      record:
+      let
+        type = lib.toUpper record.type;
+        label = ''"${record.label}"'';
+        priority = ", ${toString record.priority}";
+        weight = ", ${toString record.weight}";
+        port = ", ${toString record.port}";
+        target = '', "${record.target}"'';
+        modifiers = recordModifiers record;
+      in
+      "${type}(${label}${priority}${weight}${port}${target}${modifiers})";
 
     sshfp =
       record:
