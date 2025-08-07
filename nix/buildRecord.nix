@@ -150,11 +150,11 @@ let
         type = lib.toUpper record.type;
         label = ''"${record.label}"'';
         algorithm = ", ${toString record.algorithm}";
-        fingerptint_type = ", ${toString record.fingerptint_type}";
+        fingerprint_type = ", ${toString record.fingerprint_type}";
         fingerprint = '', "${record.fingerprint}"'';
         modifiers = recordModifiers record;
       in
-      "${type}(${label}${algorithm}${fingerptint_type}${fingerprint}${modifiers})";
+      "${type}(${label}${algorithm}${fingerprint_type}${fingerprint}${modifiers})";
 
     txt =
       record:
