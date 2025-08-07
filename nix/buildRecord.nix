@@ -72,6 +72,7 @@ let
     mx = target;
     https = target;
     srv = target;
+    ns = target;
 
     dnskey =
       record:
@@ -134,6 +135,21 @@ let
       in
       "${type}(${ttl})";
 
+    naptr =
+      record:
+      let
+        type = lib.toUpper record.type;
+        label = ''"${record.label}"'';
+        order = ", ${toString record.order}";
+        preference = ", ${toString record.preference}";
+        terminalflag = '', "${record.terminalflag}"'';
+        service = '', "${record.service}"'';
+        regexp = '', "${record.regexp}"'';
+        target = '', "${record.target}"'';
+        modifiers = recordModifiers record;
+      in
+      "${type}(${label}${order}${preference}${terminalflag}${service}${regexp}${target}${modifiers})";
+
     ptr =
       record:
       let
@@ -143,6 +159,21 @@ let
         modifiers = recordModifiers record;
       in
       "${type}(${address}${target}${modifiers})";
+
+    soa =
+      record:
+      let
+        type = lib.toUpper record.type;
+        label = ''"${record.label}"'';
+        ns = '', "${record.ns}"'';
+        mbox = '', "${record.mbox}"'';
+        refresh_rate = ", ${toString record.refresh_rate}";
+        retry_rate = ", ${toString record.retry_rate}";
+        expire_time = ", ${toString record.expire_time}";
+        default_ttl = ", ${toString record.default_ttl}";
+        modifiers = recordModifiers record;
+      in
+      "${type}(${label}${ns}${mbox}${refresh_rate}${retry_rate}${expire_time}${default_ttl}${modifiers})";
 
     sshfp =
       record:
@@ -155,6 +186,31 @@ let
         modifiers = recordModifiers record;
       in
       "${type}(${label}${algorithm}${fingerprint_type}${fingerprint}${modifiers})";
+
+    svcb =
+      record:
+      let
+        type = lib.toUpper record.type;
+        label = ''"${record.label}"'';
+        priority = ", ${toString record.priority}";
+        address = '', "${record.address}"'';
+        params = '', "${record.params}"'';
+        modifiers = recordModifiers record;
+      in
+      "${type}(${label}${priority}${address}${params}${modifiers})";
+
+    tlsa =
+      record:
+      let
+        type = lib.toUpper record.type;
+        label = ''"${record.label}"'';
+        usage = ", ${toString record.usage}";
+        selector = ", ${toString record.selector}";
+        matching_type = ", ${toString record.matching_type}";
+        certificate = '', "${record.certificate}"'';
+        modifiers = recordModifiers record;
+      in
+      "${type}(${label}${usage}${selector}${matching_type}${certificate}${modifiers})";
 
     txt =
       record:
@@ -178,9 +234,18 @@ let
     dmarc_builder = builder;
     m365_builder = builder;
     spf_builder = builder;
+    loc_builder_dd = builder;
+    loc_builder_dmm_str = builder;
+    loc_builder_dms_str = builder;
+    loc_builder_str = builder;
 
     caa =
       record: throw "Record of type ${record.type} not supported, use ${record.type}_builder instead";
+
+    loc =
+      record:
+      throw "Record of type ${record.type} not supported, use loc_builder_dd, loc_builder_dmm_str, loc_builder_dms_str, or loc_builder_str instead";
+
   };
 in
 if typeHandler ? ${record.type} then
