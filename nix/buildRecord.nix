@@ -229,7 +229,12 @@ let
       let
         type = lib.toUpper record.type;
         label = ''"${record.label}"'';
-        text = '', "${record.text}"'';
+        quoteString = x:
+          ''"${lib.replaceStrings [ "\"" ] [ "\\\"" ] x}"'';
+        text =
+          if lib.isList record.text
+          then ", [" + lib.concatMapStringsSep ", " quoteString record.text + "]"
+          else '', ${quoteString record.text}'';
         modifiers = recordModifiers record;
       in
       "${type}(${label}${text}${modifiers})";
